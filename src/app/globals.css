@@ -1,26 +1,67 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
+  --color-gold: #c5a455;
+  --color-gold-light: #d4b96a;
+  --color-gold-dark: #a68a3e;
+  --color-wall: #1a1714;
+  --color-wall-light: #2a2520;
+  --font-serif: "Playfair Display", Georgia, "Times New Roman", serif;
   --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
+  background: var(--color-wall);
+  color: #e8e0d0;
   font-family: Arial, Helvetica, sans-serif;
+  min-height: 100vh;
+}
+
+/* Gallery wall texture overlay */
+.gallery-wall {
+  background:
+    radial-gradient(ellipse at 30% 20%, rgba(60, 50, 35, 0.4) 0%, transparent 60%),
+    radial-gradient(ellipse at 70% 80%, rgba(60, 50, 35, 0.3) 0%, transparent 60%),
+    linear-gradient(180deg, #1a1714 0%, #221e19 50%, #1a1714 100%);
+}
+
+/* Gold ornate frame effect */
+.frame-outer {
+  background: linear-gradient(135deg, #d4b96a 0%, #a68a3e 25%, #c5a455 50%, #d4b96a 75%, #a68a3e 100%);
+  padding: 6px;
+  box-shadow:
+    0 0 0 1px rgba(166, 138, 62, 0.3),
+    0 4px 20px rgba(0, 0, 0, 0.5),
+    inset 0 0 0 1px rgba(212, 185, 106, 0.2);
+}
+
+.frame-inner {
+  background: linear-gradient(135deg, #b89d4a 0%, #8a7235 25%, #a68a3e 50%, #b89d4a 75%, #8a7235 100%);
+  padding: 4px;
+}
+
+.frame-mat {
+  background: #f5f0e8;
+  padding: 12px;
+}
+
+/* Spotlight effect on hover */
+.spotlight {
+  position: relative;
+}
+.spotlight::before {
+  content: '';
+  position: absolute;
+  top: -40px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 120%;
+  height: 40px;
+  background: radial-gradient(ellipse at center bottom, rgba(255, 235, 180, 0.15) 0%, transparent 70%);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+.spotlight:hover::before {
+  opacity: 1;
 }

@@ -1,65 +1,155 @@
-import Image from "next/image";
+"use client";
+
+import { useState } from "react";
+import Header from "@/components/Header";
+import ProductFrame, { Product } from "@/components/ProductFrame";
+
+// Placeholder products — will be replaced with database-driven content
+const SAMPLE_PRODUCTS: Product[] = [
+  {
+    id: "1",
+    name: "The Original",
+    price: 45.0,
+    images: [
+      "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=600&h=750&fit=crop",
+      "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=600&h=750&fit=crop",
+    ],
+  },
+  {
+    id: "2",
+    name: "Gallery Edition",
+    price: 55.0,
+    images: [
+      "https://images.unsplash.com/photo-1618354691373-d851c5c3a990?w=600&h=750&fit=crop",
+    ],
+  },
+  {
+    id: "3",
+    name: "Street Canvas",
+    price: 50.0,
+    images: [
+      "https://images.unsplash.com/photo-1576566588028-4147f3842f27?w=600&h=750&fit=crop",
+      "https://images.unsplash.com/photo-1562157873-818bc0726f68?w=600&h=750&fit=crop",
+      "https://images.unsplash.com/photo-1503341504253-dff4f94032fc?w=600&h=750&fit=crop",
+    ],
+  },
+  {
+    id: "4",
+    name: "Monochrome",
+    price: 48.0,
+    images: [
+      "https://images.unsplash.com/photo-1489987707025-afc232f7ea0f?w=600&h=750&fit=crop",
+    ],
+  },
+  {
+    id: "5",
+    name: "The Statement",
+    price: 60.0,
+    images: [
+      "https://images.unsplash.com/photo-1622445275576-721325763afe?w=600&h=750&fit=crop",
+    ],
+  },
+  {
+    id: "6",
+    name: "Varsity Collection",
+    price: 120.0,
+    images: [
+      "https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=600&h=750&fit=crop",
+    ],
+  },
+];
+
+const ITEMS_PER_PAGE = 4;
 
 export default function Home() {
+  const [startIndex, setStartIndex] = useState(0);
+  const totalPages = Math.ceil(SAMPLE_PRODUCTS.length / ITEMS_PER_PAGE);
+  const currentPage = Math.floor(startIndex / ITEMS_PER_PAGE);
+
+  const visibleProducts = SAMPLE_PRODUCTS.slice(
+    startIndex,
+    startIndex + ITEMS_PER_PAGE
+  );
+
+  function goNext() {
+    setStartIndex((i) =>
+      i + ITEMS_PER_PAGE >= SAMPLE_PRODUCTS.length ? 0 : i + ITEMS_PER_PAGE
+    );
+  }
+
+  function goPrev() {
+    setStartIndex((i) =>
+      i - ITEMS_PER_PAGE < 0
+        ? Math.max(0, SAMPLE_PRODUCTS.length - ITEMS_PER_PAGE)
+        : i - ITEMS_PER_PAGE
+    );
+  }
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
+    <div className="gallery-wall min-h-screen flex flex-col">
+      <Header />
+
+      <main className="flex-1 flex flex-col items-center justify-center px-4 py-12 md:py-20">
+        {/* Gallery subtitle */}
+        <p className="text-sm tracking-[0.3em] uppercase text-neutral-500 mb-12">
+          Current Exhibition
+        </p>
+
+        {/* Gallery grid with navigation arrows */}
+        <div className="flex items-center gap-4 md:gap-8 w-full max-w-7xl justify-center">
+          {/* Left arrow */}
+          {totalPages > 1 && (
+            <button
+              onClick={goPrev}
+              className="w-10 h-10 rounded-full border border-neutral-700 text-neutral-400 flex items-center justify-center hover:border-[#c5a455] hover:text-[#c5a455] transition-colors shrink-0"
+              aria-label="Previous items"
             >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
+              &lsaquo;
+            </button>
+          )}
+
+          {/* Product frames */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-12">
+            {visibleProducts.map((product) => (
+              <ProductFrame key={product.id} product={product} />
+            ))}
+          </div>
+
+          {/* Right arrow */}
+          {totalPages > 1 && (
+            <button
+              onClick={goNext}
+              className="w-10 h-10 rounded-full border border-neutral-700 text-neutral-400 flex items-center justify-center hover:border-[#c5a455] hover:text-[#c5a455] transition-colors shrink-0"
+              aria-label="Next items"
             >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+              &rsaquo;
+            </button>
+          )}
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
+
+        {/* Page dots */}
+        {totalPages > 1 && (
+          <div className="flex gap-2 mt-10">
+            {Array.from({ length: totalPages }).map((_, i) => (
+              <button
+                key={i}
+                onClick={() => setStartIndex(i * ITEMS_PER_PAGE)}
+                className={`w-2.5 h-2.5 rounded-full transition-colors ${
+                  i === currentPage
+                    ? "bg-[#c5a455]"
+                    : "bg-neutral-700 hover:bg-neutral-500"
+                }`}
+                aria-label={`Page ${i + 1}`}
+              />
+            ))}
+          </div>
+        )}
       </main>
+
+      {/* Footer */}
+      <footer className="text-center py-6 text-xs text-neutral-600 border-t border-neutral-800">
+        MaaS Market &mdash; Wearable Art, Curated
+      </footer>
     </div>
   );
 }
