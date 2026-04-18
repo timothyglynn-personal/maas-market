@@ -1,10 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Header from "@/components/Header";
 import ProductFrame, { Product } from "@/components/ProductFrame";
 
-// Placeholder products — will be replaced with database-driven content
 const SAMPLE_PRODUCTS: Product[] = [
   {
     id: "1",
@@ -41,46 +40,58 @@ const SAMPLE_PRODUCTS: Product[] = [
       "https://images.unsplash.com/photo-1489987707025-afc232f7ea0f?w=600&h=750&fit=crop",
     ],
   },
-  {
-    id: "5",
-    name: "The Statement",
-    price: 60.0,
-    images: [
-      "https://images.unsplash.com/photo-1622445275576-721325763afe?w=600&h=750&fit=crop",
-    ],
-  },
-  {
-    id: "6",
-    name: "Varsity Collection",
-    price: 120.0,
-    images: [
-      "https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=600&h=750&fit=crop",
-    ],
-  },
 ];
 
 const ITEMS_PER_PAGE = 4;
 
 export default function Home() {
+  const [products, setProducts] = useState<Product[]>(SAMPLE_PRODUCTS);
   const [startIndex, setStartIndex] = useState(0);
-  const totalPages = Math.ceil(SAMPLE_PRODUCTS.length / ITEMS_PER_PAGE);
+
+  useEffect(() => {
+    fetch("/api/products")
+      .then((r) => r.json())
+      .then((data) => {
+        if (Array.isArray(data) && data.length > 0) {
+          const mapped: Product[] = data.map((p: {
+            id: string;
+            name: string;
+            price: number;
+            product_images: { url: string; sort_order: number }[];
+          }) => ({
+            id: p.id,
+            name: p.name,
+            price: p.price / 100,
+            images: p.product_images
+              ?.sort((a: { sort_order: number }, b: { sort_order: number }) => a.sort_order - b.sort_order)
+              .map((img: { url: string }) => img.url) || [],
+          }));
+          setProducts(mapped);
+        }
+      })
+      .catch(() => {
+        // Keep sample products on error
+      });
+  }, []);
+
+  const totalPages = Math.ceil(products.length / ITEMS_PER_PAGE);
   const currentPage = Math.floor(startIndex / ITEMS_PER_PAGE);
 
-  const visibleProducts = SAMPLE_PRODUCTS.slice(
+  const visibleProducts = products.slice(
     startIndex,
     startIndex + ITEMS_PER_PAGE
   );
 
   function goNext() {
     setStartIndex((i) =>
-      i + ITEMS_PER_PAGE >= SAMPLE_PRODUCTS.length ? 0 : i + ITEMS_PER_PAGE
+      i + ITEMS_PER_PAGE >= products.length ? 0 : i + ITEMS_PER_PAGE
     );
   }
 
   function goPrev() {
     setStartIndex((i) =>
       i - ITEMS_PER_PAGE < 0
-        ? Math.max(0, SAMPLE_PRODUCTS.length - ITEMS_PER_PAGE)
+        ? Math.max(0, products.length - ITEMS_PER_PAGE)
         : i - ITEMS_PER_PAGE
     );
   }
@@ -90,14 +101,11 @@ export default function Home() {
       <Header />
 
       <main className="flex-1 flex flex-col items-center justify-center px-4 py-12 md:py-20">
-        {/* Gallery subtitle */}
         <p className="text-sm tracking-[0.3em] uppercase text-neutral-500 mb-12">
           Current Exhibition
         </p>
 
-        {/* Gallery grid with navigation arrows */}
         <div className="flex items-center gap-4 md:gap-8 w-full max-w-7xl justify-center">
-          {/* Left arrow */}
           {totalPages > 1 && (
             <button
               onClick={goPrev}
@@ -108,14 +116,12 @@ export default function Home() {
             </button>
           )}
 
-          {/* Product frames */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-12">
             {visibleProducts.map((product) => (
               <ProductFrame key={product.id} product={product} />
             ))}
           </div>
 
-          {/* Right arrow */}
           {totalPages > 1 && (
             <button
               onClick={goNext}
@@ -127,7 +133,6 @@ export default function Home() {
           )}
         </div>
 
-        {/* Page dots */}
         {totalPages > 1 && (
           <div className="flex gap-2 mt-10">
             {Array.from({ length: totalPages }).map((_, i) => (
@@ -146,7 +151,6 @@ export default function Home() {
         )}
       </main>
 
-      {/* Footer */}
       <footer className="text-center py-6 text-xs text-neutral-600 border-t border-neutral-800">
         MaaS Market &mdash; Wearable Art, Curated
       </footer>
