@@ -1,7 +1,12 @@
 import Stripe from "stripe";
 import { NextRequest, NextResponse } from "next/server";
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
+  maxNetworkRetries: 3,
+  timeout: 10000,
+});
+
+export const runtime = "nodejs";
 
 export async function POST(req: NextRequest) {
   try {
@@ -34,6 +39,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ url: session.url });
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : "Unknown error";
+    console.error("Checkout error:", message);
     return NextResponse.json({ error: message }, { status: 500 });
   }
 }
