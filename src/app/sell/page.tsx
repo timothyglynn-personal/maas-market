@@ -1,10 +1,18 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import Header from "@/components/Header";
 
 export default function SellPage() {
+  return (
+    <Suspense>
+      <SellPageInner />
+    </Suspense>
+  );
+}
+
+function SellPageInner() {
   const searchParams = useSearchParams();
   const onboardingComplete = searchParams.get("onboarding") === "complete";
   const refreshed = searchParams.get("refresh") === "true";
