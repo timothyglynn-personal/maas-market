@@ -95,7 +95,20 @@ export default function ProductFrame({ product }: { product: Product }) {
           ${product.price.toFixed(2)}
         </span>
         <button
-          className="px-6 py-2 rounded-sm text-sm font-semibold tracking-wider uppercase transition-all hover:brightness-110"
+          onClick={async () => {
+            const res = await fetch("/api/checkout", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                productName: product.name,
+                priceInCents: Math.round(product.price * 100),
+                connectedAccountId: process.env.NEXT_PUBLIC_STRIPE_CONNECTED_ACCOUNT_ID || "acct_1TNigiE9MgvpljEt",
+              }),
+            });
+            const { url } = await res.json();
+            if (url) window.location.href = url;
+          }}
+          className="px-6 py-2 rounded-sm text-sm font-semibold tracking-wider uppercase transition-all hover:brightness-110 cursor-pointer"
           style={{
             background:
               "linear-gradient(135deg, #c5a455 0%, #d4b96a 50%, #a68a3e 100%)",
