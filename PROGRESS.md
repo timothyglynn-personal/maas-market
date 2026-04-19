@@ -10,29 +10,39 @@
 * **Repo:** github.com/timothyglynn-personal/maas-market (auto-deploys to Vercel on push)
 * **Storefront UI:** Art gallery aesthetic — dark museum wall, gold ornate CSS frames, image carousels per product, page navigation, header with search + "Sell on MaaS Market" CTA
 * **Deployed:** Live at maas-market.com and maas-market.vercel.app
-* **QR codes:** Print-quality SVG and PNG in `public/` pointing to maas-market.com (high error correction for fabric printing)
+* **QR codes:** Print-quality SVG and PNG in `public/` pointing to maas-market.com
 * **Stripe Projects:** Initialized, Supabase provider linked
 * **Supabase database:** Tables created (sellers, products, product_images) with Row Level Security
 * **Admin page:** `/admin` for adding/editing/deleting products with images
-* **Products API:** `/api/products` serves active products to the storefront, falls back to sample data when DB is empty
-* **Supabase env vars added to Vercel** — production site now connects to database
-* **Stripe Connect dashboard setup** — Connect enabled, connected account created for self as first seller
+* **Products API:** `/api/products` serves active products to the storefront
+* **Stripe Connect:** Fully integrated in sandbox mode
+  * Platform account: `acct_1TNiGDEALUlxsCs2` (sandbox)
+  * Connected seller account: `acct_1TNigiE9MgvpljEt` (user as first seller)
+  * Buy Now buttons → Stripe Checkout with destination charges, 10% platform fee
+  * Shipping address collection (US, CA, GB, IE)
+* **Seller onboarding:** `/sell` page with signup form → Stripe Express account creation → hosted onboarding
 
 ## Known issues
 
-* Home ISP (Charter/CujoAI) blocks maas-market.com on local network — works on cellular and other networks. Should resolve as domain builds reputation.
+* Home ISP (Charter/CujoAI) blocks maas-market.com on local network — works on cellular and other networks
 * Vercel Hobby plan can't link via Stripe Projects (team limit) — Vercel works fine independently
+* Stripe Node SDK has connection issues on Vercel serverless — using direct `fetch` to Stripe API instead
 
-## Next steps (resume here)
+## Next steps
 
-1. **Stripe Connect code integration** — this is the immediate next step:
-   * Need from user: Stripe test secret key (`sk_test_...`) and connected account ID (`acct_...`)
-   * Wire "Buy Now" buttons to Stripe Checkout Sessions with destination charges
-   * Build webhook handler for `checkout.session.completed`
-   * Build "Sell on MaaS Market" onboarding flow (Express account creation + Stripe-hosted onboarding)
-   * Dogfooding log: https://docs.google.com/document/d/185VkwLWJA8TMKjGIhp-9a8xqn8aSp_dtbDWG0H-NlD4
-2. **Seller onboarding flow** — signup form, Stripe-hosted Account Links, basic seller dashboard
-3. **Add real products** — use `/admin` to add actual product listings as items are ready
+1. **Add real products** — use `/admin` to add actual product listings with real images
+2. **Build webhook handler** — `/api/webhooks/stripe` to listen for `checkout.session.completed` and track orders
+3. **Seller dashboard** — let sellers view their products, sales, and payout status
+4. **Go live** — swap sandbox keys to live keys, create live connected account
+5. **Update dogfooding log** — document remaining steps in Google Doc
+
+## Key accounts and IDs
+
+* **Stripe sandbox platform:** `acct_1TNiGDEALUlxsCs2`
+* **Stripe connected account (self as seller):** `acct_1TNigiE9MgvpljEt`
+* **Supabase project:** `kgzvjgejnxawiwmzjkrg`
+* **Vercel project:** `timothy-glynns-projects/maas-market`
+* **Dogfooding log:** https://docs.google.com/document/d/185VkwLWJA8TMKjGIhp-9a8xqn8aSp_dtbDWG0H-NlD4
 
 ## Tech stack
 
