@@ -151,6 +151,113 @@ export default function Home() {
         )}
       </main>
 
+      {/* Email signup */}
+      <section className="w-full max-w-xl mx-auto px-4 py-16 text-center">
+        <h2
+          className="text-xl font-semibold mb-2"
+          style={{ fontFamily: "var(--font-playfair), Georgia, serif", color: "#c5a455" }}
+        >
+          Stay in the loop
+        </h2>
+        <p className="text-sm text-neutral-400 mb-6">
+          Sign up for the latest updates and swag drops
+        </p>
+        <form
+          onSubmit={async (e) => {
+            e.preventDefault();
+            const form = e.target as HTMLFormElement;
+            const input = form.elements.namedItem("email") as HTMLInputElement;
+            const msg = form.querySelector("[data-msg]") as HTMLElement;
+            const res = await fetch("/api/subscribe", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ email: input.value }),
+            });
+            const data = await res.json();
+            msg.textContent = data.message || data.error;
+            msg.className = res.ok ? "text-sm text-green-400 mt-3" : "text-sm text-red-400 mt-3";
+            if (res.ok) input.value = "";
+          }}
+          className="flex gap-2 justify-center"
+        >
+          <input
+            name="email"
+            type="email"
+            required
+            placeholder="your@email.com"
+            className="px-4 py-2 bg-neutral-900 border border-neutral-700 rounded-sm text-sm text-neutral-200 placeholder-neutral-500 focus:outline-none focus:border-[#c5a455]/50 w-64"
+          />
+          <button
+            type="submit"
+            className="px-5 py-2 rounded-sm text-sm font-semibold tracking-wider uppercase"
+            style={{
+              background: "linear-gradient(135deg, #c5a455 0%, #d4b96a 50%, #a68a3e 100%)",
+              color: "#1a1714",
+            }}
+          >
+            Subscribe
+          </button>
+        </form>
+        <p data-msg className="text-sm mt-3">&nbsp;</p>
+      </section>
+
+      {/* Content suggestions */}
+      <section className="w-full max-w-xl mx-auto px-4 pb-16 text-center">
+        <h2
+          className="text-xl font-semibold mb-2"
+          style={{ fontFamily: "var(--font-playfair), Georgia, serif", color: "#c5a455" }}
+        >
+          Suggest content ideas
+        </h2>
+        <p className="text-sm text-neutral-400 mb-6">
+          Got an idea for a design, collab, or drop? We&apos;re all ears.
+        </p>
+        <form
+          onSubmit={async (e) => {
+            e.preventDefault();
+            const form = e.target as HTMLFormElement;
+            const messageEl = form.elements.namedItem("message") as HTMLTextAreaElement;
+            const emailEl = form.elements.namedItem("suggestEmail") as HTMLInputElement;
+            const msg = form.querySelector("[data-suggest-msg]") as HTMLElement;
+            const res = await fetch("/api/suggest", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ message: messageEl.value, email: emailEl.value }),
+            });
+            const data = await res.json();
+            msg.textContent = data.message || data.error;
+            msg.className = res.ok ? "text-sm text-green-400 mt-3" : "text-sm text-red-400 mt-3";
+            if (res.ok) { messageEl.value = ""; emailEl.value = ""; }
+          }}
+          className="flex flex-col gap-3"
+        >
+          <textarea
+            name="message"
+            required
+            rows={3}
+            placeholder="Your idea..."
+            className="w-full px-4 py-2 bg-neutral-900 border border-neutral-700 rounded-sm text-sm text-neutral-200 placeholder-neutral-500 focus:outline-none focus:border-[#c5a455]/50"
+          />
+          <input
+            name="suggestEmail"
+            type="email"
+            placeholder="Your email (optional)"
+            className="w-full px-4 py-2 bg-neutral-900 border border-neutral-700 rounded-sm text-sm text-neutral-200 placeholder-neutral-500 focus:outline-none focus:border-[#c5a455]/50"
+          />
+          <button
+            type="submit"
+            className="px-5 py-2 rounded-sm text-sm font-semibold tracking-wider uppercase self-center"
+            style={{
+              background: "linear-gradient(135deg, #c5a455 0%, #d4b96a 50%, #a68a3e 100%)",
+              color: "#1a1714",
+            }}
+          >
+            Submit
+          </button>
+        </form>
+        <p data-suggest-msg className="text-sm mt-3">&nbsp;</p>
+      </section>
+
       <footer className="text-center py-6 text-xs text-neutral-600 border-t border-neutral-800">
         MaaS Market &mdash; Wearable Art, Curated
       </footer>
