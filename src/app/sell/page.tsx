@@ -50,29 +50,18 @@ function SellPageInner() {
       <main className="flex-1 flex items-center justify-center px-4 py-20">
         <div className="max-w-md w-full">
           {onboardingComplete ? (
-            <div className="text-center">
+            <div className="text-center glass-card rounded-lg p-10">
               <h1
-                className="text-3xl font-bold mb-4"
-                style={{
-                  fontFamily: "var(--font-playfair), Georgia, serif",
-                  color: "#c5a455",
-                }}
+                className="gold-shimmer text-3xl font-bold mb-4"
+                style={{ fontFamily: "var(--font-playfair), Georgia, serif" }}
               >
                 Welcome to MaaS Market
               </h1>
-              <p className="text-neutral-400 mb-6">
+              <p className="text-purple-300/60 mb-6">
                 Your seller account is being set up. You&apos;ll be able to
                 list products once your account is verified.
               </p>
-              <a
-                href="/"
-                className="inline-block px-6 py-2 rounded-sm text-sm font-semibold tracking-wider uppercase"
-                style={{
-                  background:
-                    "linear-gradient(135deg, #c5a455 0%, #d4b96a 50%, #a68a3e 100%)",
-                  color: "#1a1714",
-                }}
-              >
+              <a href="/" className="btn-gold inline-block px-6 py-2 rounded-sm text-sm">
                 Browse the Gallery
               </a>
             </div>
@@ -80,14 +69,11 @@ function SellPageInner() {
             <>
               <h1
                 className="text-3xl font-bold mb-2 text-center"
-                style={{
-                  fontFamily: "var(--font-playfair), Georgia, serif",
-                  color: "#c5a455",
-                }}
+                style={{ fontFamily: "var(--font-marker), cursive" }}
               >
-                Sell on MaaS Market
+                <span className="spray-text text-white/90">Sell on MaaS</span>
               </h1>
-              <p className="text-neutral-500 text-sm text-center mb-8">
+              <p className="text-purple-300/50 text-sm text-center mb-8">
                 Join our curated marketplace and showcase your wearable art
               </p>
 
@@ -99,10 +85,10 @@ function SellPageInner() {
 
               <form
                 onSubmit={handleSubmit}
-                className="bg-neutral-900 border border-neutral-800 rounded-lg p-6"
+                className="glass-card rounded-lg p-6"
               >
                 <div className="mb-4">
-                  <label className="block text-sm text-neutral-400 mb-1">
+                  <label className="block text-sm text-purple-300/60 mb-1">
                     Name
                   </label>
                   <input
@@ -110,12 +96,12 @@ function SellPageInner() {
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     required
-                    className="w-full px-3 py-2 bg-neutral-800 border border-neutral-700 rounded text-sm focus:outline-none focus:border-[#c5a455]/50"
+                    className="w-full px-3 py-2 rounded-sm input-blurple text-sm"
                   />
                 </div>
 
                 <div className="mb-6">
-                  <label className="block text-sm text-neutral-400 mb-1">
+                  <label className="block text-sm text-purple-300/60 mb-1">
                     Email
                   </label>
                   <input
@@ -123,7 +109,7 @@ function SellPageInner() {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
-                    className="w-full px-3 py-2 bg-neutral-800 border border-neutral-700 rounded text-sm focus:outline-none focus:border-[#c5a455]/50"
+                    className="w-full px-3 py-2 rounded-sm input-blurple text-sm"
                   />
                 </div>
 
@@ -134,12 +120,7 @@ function SellPageInner() {
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="w-full py-2 rounded-sm text-sm font-semibold tracking-wider uppercase disabled:opacity-50"
-                  style={{
-                    background:
-                      "linear-gradient(135deg, #c5a455 0%, #d4b96a 50%, #a68a3e 100%)",
-                    color: "#1a1714",
-                  }}
+                  className="btn-gold w-full py-2 rounded-sm text-sm disabled:opacity-50"
                 >
                   {submitting ? "Setting up..." : "Get Started"}
                 </button>

@@ -25,58 +25,57 @@ export default function ProductFrame({ product }: { product: Product }) {
   }
 
   return (
-    <div className="spotlight flex flex-col items-center gap-4">
-      {/* Item name */}
-      <h3
-        className="text-lg md:text-xl font-semibold tracking-wide text-center"
-        style={{
-          fontFamily: "var(--font-playfair), Georgia, serif",
-          color: "#c5a455",
-        }}
+    <div className="spotlight flex flex-col items-center gap-4 group">
+      {/* Item name — gold shimmer */}
+      <h3 className="gold-shimmer text-lg md:text-xl font-semibold tracking-wide text-center"
+        style={{ fontFamily: "var(--font-playfair), Georgia, serif" }}
       >
         {product.name}
       </h3>
 
       {/* Gold frame */}
-      <div className="frame-outer rounded-sm">
-        <div className="frame-inner rounded-sm">
+      <div className="frame-outer rounded-sm relative">
+        <div className="frame-inner rounded-sm relative">
           <div className="frame-mat relative">
-            <div className="relative w-[240px] h-[300px] md:w-[280px] md:h-[350px] overflow-hidden bg-neutral-100">
+            <div className="relative w-[240px] h-[300px] md:w-[280px] md:h-[350px] overflow-hidden">
               <Image
                 src={product.images[currentImage]}
                 alt={product.name}
                 fill
-                className="object-cover"
+                className="object-cover transition-transform duration-700 group-hover:scale-105"
                 sizes="(max-width: 768px) 240px, 280px"
               />
+
+              {/* Vignette overlay */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-black/10 pointer-events-none" />
 
               {hasMultiple && (
                 <>
                   <button
                     onClick={prev}
-                    className="absolute left-1 top-1/2 -translate-y-1/2 w-7 h-7 rounded-full bg-black/40 text-white flex items-center justify-center text-sm hover:bg-black/60 transition-colors"
+                    className="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-[#1a1040]/60 text-white flex items-center justify-center text-base hover:bg-[#c5a455]/80 hover:text-[#1a1040] transition-all backdrop-blur-sm border border-white/10"
                     aria-label="Previous image"
                   >
                     &lsaquo;
                   </button>
                   <button
                     onClick={next}
-                    className="absolute right-1 top-1/2 -translate-y-1/2 w-7 h-7 rounded-full bg-black/40 text-white flex items-center justify-center text-sm hover:bg-black/60 transition-colors"
+                    className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-[#1a1040]/60 text-white flex items-center justify-center text-base hover:bg-[#c5a455]/80 hover:text-[#1a1040] transition-all backdrop-blur-sm border border-white/10"
                     aria-label="Next image"
                   >
                     &rsaquo;
                   </button>
 
                   {/* Dots */}
-                  <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1.5">
+                  <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-2">
                     {product.images.map((_, i) => (
                       <button
                         key={i}
                         onClick={() => setCurrentImage(i)}
-                        className={`w-2 h-2 rounded-full transition-colors ${
+                        className={`w-2 h-2 rounded-full transition-all duration-300 ${
                           i === currentImage
-                            ? "bg-white"
-                            : "bg-white/40 hover:bg-white/60"
+                            ? "bg-[#c5a455] shadow-[0_0_6px_rgba(197,164,85,0.6)]"
+                            : "bg-white/30 hover:bg-white/60"
                         }`}
                         aria-label={`Image ${i + 1}`}
                       />
@@ -91,7 +90,7 @@ export default function ProductFrame({ product }: { product: Product }) {
 
       {/* Price and buy button */}
       <div className="flex flex-col items-center gap-2">
-        <span className="text-sm text-neutral-400">
+        <span className="text-sm text-purple-300/70 font-medium">
           ${product.price.toFixed(2)}
         </span>
         <button
@@ -108,12 +107,7 @@ export default function ProductFrame({ product }: { product: Product }) {
             const { url } = await res.json();
             if (url) window.location.href = url;
           }}
-          className="px-6 py-2 rounded-sm text-sm font-semibold tracking-wider uppercase transition-all hover:brightness-110 cursor-pointer"
-          style={{
-            background:
-              "linear-gradient(135deg, #c5a455 0%, #d4b96a 50%, #a68a3e 100%)",
-            color: "#1a1714",
-          }}
+          className="btn-gold px-6 py-2 rounded-sm text-sm cursor-pointer"
         >
           Buy Now
         </button>

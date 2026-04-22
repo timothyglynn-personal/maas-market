@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Playfair_Display, Geist } from "next/font/google";
+import { Playfair_Display, Geist, Permanent_Marker } from "next/font/google";
 import "./globals.css";
 
 const playfair = Playfair_Display({
@@ -13,9 +13,15 @@ const geist = Geist({
   subsets: ["latin"],
 });
 
+const marker = Permanent_Marker({
+  variable: "--font-marker",
+  subsets: ["latin"],
+  weight: "400",
+});
+
 export const metadata: Metadata = {
   title: "MaaS Market",
-  description: "A curated marketplace for wearable art",
+  description: "Wearable art, curated. A marketplace for the bold.",
 };
 
 export default function RootLayout({
@@ -26,7 +32,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${playfair.variable} ${geist.variable} h-full antialiased`}
+      className={`${playfair.variable} ${geist.variable} ${marker.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">{children}</body>
     </html>
