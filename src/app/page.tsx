@@ -97,20 +97,28 @@ export default function Home() {
           <Image src="/llama.jpeg" alt="" width={350} height={350} className="rotate-12" />
         </div>
 
-        {/* Title */}
-        <div className="flex items-end gap-2 mb-3">
+        {/* Title — MaaS Market as one unified phrase */}
+        <div className="flex items-center gap-0 mb-3">
           <Image
-            src="/Maas.png"
+            src="/maas-logo.png"
             alt="MaaS"
-            width={240}
-            height={82}
-            className="invert brightness-200 drop-shadow-[0_0_25px_rgba(197,164,85,0.35)]"
+            width={180}
+            height={62}
+            className="brightness-[10] drop-shadow-[0_0_20px_rgba(197,164,85,0.3)]"
           />
           <span
-            className="spray-text spray-drip text-4xl md:text-6xl text-white/90 -mb-1"
-            style={{ fontFamily: "var(--font-marker), cursive" }}
+            className="text-4xl md:text-5xl text-white/90 -ml-1 relative"
+            style={{
+              fontFamily: "var(--font-marker), cursive",
+              textShadow: "0 0 12px rgba(255,255,255,0.25), 0 0 30px rgba(140,80,220,0.2), 3px 3px 0 rgba(0,0,0,0.5)",
+              transform: "rotate(-3deg) skewX(-3deg)",
+              display: "inline-block",
+            }}
           >
             Market
+            {/* Drip */}
+            <span className="absolute -bottom-2 left-[20%] w-[3px] h-[14px] bg-white/30 rounded-b-full" />
+            <span className="absolute -bottom-3 left-[65%] w-[2px] h-[10px] bg-white/20 rounded-b-full" />
           </span>
         </div>
 
