@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import Image from "next/image";
 import Header from "@/components/Header";
 import ProductFrame, { Product } from "@/components/ProductFrame";
+import ProductModal from "@/components/ProductModal";
 
 const SAMPLE_PRODUCTS: Product[] = [
   {
@@ -48,6 +49,7 @@ const ITEMS_PER_PAGE = 4;
 export default function Home() {
   const [products, setProducts] = useState<Product[]>(SAMPLE_PRODUCTS);
   const [startIndex, setStartIndex] = useState(0);
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
 
   useEffect(() => {
     fetch("/api/products")
@@ -89,24 +91,23 @@ export default function Home() {
       <Header />
 
       {/* Hero section */}
-      <section className="relative flex flex-col items-center pt-16 pb-8 px-4 overflow-hidden">
+      <section className="relative flex flex-col items-center pt-14 pb-6 px-4 overflow-hidden">
         {/* Llama watermark */}
-        <div className="absolute right-[5%] top-8 opacity-[0.04] pointer-events-none select-none">
-          <Image src="/llama.jpeg" alt="" width={300} height={300} className="rotate-12" />
+        <div className="absolute right-[5%] top-4 opacity-[0.05] pointer-events-none select-none">
+          <Image src="/llama.jpeg" alt="" width={350} height={350} className="rotate-12" />
         </div>
 
         {/* Title */}
-        <div className="flex items-end gap-2 mb-4">
+        <div className="flex items-end gap-2 mb-3">
           <Image
             src="/Maas.png"
             alt="MaaS"
-            width={220}
-            height={75}
-            className="drop-shadow-[0_0_20px_rgba(197,164,85,0.3)]"
-            style={{ filter: "invert(1) brightness(2)" }}
+            width={240}
+            height={82}
+            className="invert brightness-200 drop-shadow-[0_0_25px_rgba(197,164,85,0.35)]"
           />
           <span
-            className="spray-text spray-drip text-4xl md:text-5xl text-white/90 -mb-1"
+            className="spray-text spray-drip text-4xl md:text-6xl text-white/90 -mb-1"
             style={{ fontFamily: "var(--font-marker), cursive" }}
           >
             Market
@@ -114,86 +115,21 @@ export default function Home() {
         </div>
 
         <p
-          className="text-base md:text-lg tracking-widest uppercase text-purple-300/60 mb-2"
-          style={{ fontFamily: "var(--font-playfair), Georgia, serif" }}
+          className="text-sm md:text-base tracking-[0.4em] uppercase text-purple-300/50 mb-2"
+          style={{ fontFamily: "var(--font-playfair), Georgia, serif", letterSpacing: "0.4em" }}
         >
           Wearable Art, Curated
         </p>
 
-        {/* Splatter divider */}
-        <div className="splatter-divider w-48 mt-6" />
+        <div className="splatter-divider w-56 mt-4" />
       </section>
 
-      {/* Gallery */}
-      <main className="flex-1 flex flex-col items-center px-4 py-8 md:py-14">
-        <p
-          className="spray-text text-sm tracking-[0.3em] uppercase text-purple-300/50 mb-10"
-          style={{ fontFamily: "var(--font-marker), cursive" }}
-        >
-          Current Exhibition
-        </p>
-
-        <div className="flex items-center gap-4 md:gap-8 w-full max-w-7xl justify-center">
-          {totalPages > 1 && (
-            <button
-              onClick={goPrev}
-              className="w-10 h-10 rounded-full border-2 border-purple-700/50 text-purple-400/60 flex items-center justify-center hover:border-[#c5a455] hover:text-[#c5a455] hover:shadow-[0_0_15px_rgba(197,164,85,0.2)] transition-all shrink-0"
-              aria-label="Previous items"
-            >
-              &lsaquo;
-            </button>
-          )}
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-12">
-            {visibleProducts.map((product) => (
-              <ProductFrame key={product.id} product={product} />
-            ))}
-          </div>
-
-          {totalPages > 1 && (
-            <button
-              onClick={goNext}
-              className="w-10 h-10 rounded-full border-2 border-purple-700/50 text-purple-400/60 flex items-center justify-center hover:border-[#c5a455] hover:text-[#c5a455] hover:shadow-[0_0_15px_rgba(197,164,85,0.2)] transition-all shrink-0"
-              aria-label="Next items"
-            >
-              &rsaquo;
-            </button>
-          )}
-        </div>
-
-        {totalPages > 1 && (
-          <div className="flex gap-2 mt-10">
-            {Array.from({ length: totalPages }).map((_, i) => (
-              <button
-                key={i}
-                onClick={() => setStartIndex(i * ITEMS_PER_PAGE)}
-                className={`w-2.5 h-2.5 rounded-full transition-all ${
-                  i === currentPage
-                    ? "bg-[#c5a455] shadow-[0_0_8px_rgba(197,164,85,0.5)]"
-                    : "bg-purple-700/40 hover:bg-purple-500/50"
-                }`}
-                aria-label={`Page ${i + 1}`}
-              />
-            ))}
-          </div>
-        )}
-      </main>
-
-      {/* Splatter divider */}
-      <div className="splatter-divider w-64 mx-auto" />
-
-      {/* Email signup */}
-      <section className="w-full max-w-xl mx-auto px-4 py-16 text-center">
-        <div className="glass-card rounded-lg p-8">
-          <h2
-            className="gold-shimmer text-xl font-semibold mb-2"
-            style={{ fontFamily: "var(--font-playfair), Georgia, serif" }}
-          >
-            Stay in the loop
+      {/* Subscribe — at the top */}
+      <section className="w-full max-w-xl mx-auto px-4 py-8 text-center">
+        <div className="glass-card rounded-xl p-8">
+          <h2 className="spray-text text-xl text-white/90 mb-2" style={{ fontFamily: "var(--font-marker), cursive" }}>
+            Subscribe for updates to the latest drops
           </h2>
-          <p className="text-sm text-purple-300/50 mb-6">
-            Sign up for the latest updates and swag drops
-          </p>
           <form
             onSubmit={async (e) => {
               e.preventDefault();
@@ -210,16 +146,16 @@ export default function Home() {
               msg.className = res.ok ? "text-sm text-green-400 mt-3" : "text-sm text-red-400 mt-3";
               if (res.ok) input.value = "";
             }}
-            className="flex gap-2 justify-center"
+            className="flex gap-2 justify-center mt-4"
           >
             <input
               name="email"
               type="email"
               required
               placeholder="your@email.com"
-              className="px-4 py-2 rounded-sm input-blurple text-sm w-64"
+              className="px-4 py-2.5 rounded-sm input-blurple text-sm w-64"
             />
-            <button type="submit" className="btn-gold px-5 py-2 rounded-sm text-sm">
+            <button type="submit" className="btn-gold px-5 py-2.5 rounded-sm text-sm">
               Subscribe
             </button>
           </form>
@@ -227,16 +163,74 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Gallery */}
+      <main className="flex-1 flex flex-col items-center px-4 py-8 md:py-12">
+        <p
+          className="spray-text text-base tracking-[0.3em] uppercase text-purple-300/40 mb-10"
+          style={{ fontFamily: "var(--font-marker), cursive" }}
+        >
+          Current Exhibition
+        </p>
+
+        <div className="flex items-center gap-4 md:gap-8 w-full max-w-7xl justify-center">
+          {totalPages > 1 && (
+            <button
+              onClick={goPrev}
+              className="w-12 h-12 rounded-full border-2 border-purple-700/40 text-purple-400/50 flex items-center justify-center text-lg hover:border-[#c5a455] hover:text-[#c5a455] hover:shadow-[0_0_20px_rgba(197,164,85,0.25)] transition-all shrink-0"
+              aria-label="Previous items"
+            >
+              &lsaquo;
+            </button>
+          )}
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-12">
+            {visibleProducts.map((product) => (
+              <ProductFrame
+                key={product.id}
+                product={product}
+                onSelect={() => setSelectedProduct(product)}
+              />
+            ))}
+          </div>
+
+          {totalPages > 1 && (
+            <button
+              onClick={goNext}
+              className="w-12 h-12 rounded-full border-2 border-purple-700/40 text-purple-400/50 flex items-center justify-center text-lg hover:border-[#c5a455] hover:text-[#c5a455] hover:shadow-[0_0_20px_rgba(197,164,85,0.25)] transition-all shrink-0"
+              aria-label="Next items"
+            >
+              &rsaquo;
+            </button>
+          )}
+        </div>
+
+        {totalPages > 1 && (
+          <div className="flex gap-3 mt-10">
+            {Array.from({ length: totalPages }).map((_, i) => (
+              <button
+                key={i}
+                onClick={() => setStartIndex(i * ITEMS_PER_PAGE)}
+                className={`w-3 h-3 rounded-full transition-all ${
+                  i === currentPage
+                    ? "bg-[#c5a455] shadow-[0_0_10px_rgba(197,164,85,0.6)]"
+                    : "bg-purple-700/30 hover:bg-purple-500/40"
+                }`}
+                aria-label={`Page ${i + 1}`}
+              />
+            ))}
+          </div>
+        )}
+      </main>
+
+      <div className="splatter-divider w-72 mx-auto" />
+
       {/* Content suggestions */}
-      <section className="w-full max-w-xl mx-auto px-4 pb-16 text-center">
-        <div className="glass-card rounded-lg p-8">
-          <h2
-            className="text-xl font-semibold mb-2"
-            style={{ fontFamily: "var(--font-marker), cursive", color: "rgba(240,238,245,0.8)" }}
-          >
-            <span className="spray-text">Suggest content ideas</span>
+      <section className="w-full max-w-xl mx-auto px-4 py-14 text-center">
+        <div className="glass-card rounded-xl p-8">
+          <h2 className="spray-text text-xl text-white/90 mb-2" style={{ fontFamily: "var(--font-marker), cursive" }}>
+            Suggest content ideas
           </h2>
-          <p className="text-sm text-purple-300/50 mb-6">
+          <p className="text-sm text-purple-300/40 mb-6">
             Got an idea for a design, collab, or drop? We&apos;re all ears.
           </p>
           <form
@@ -263,15 +257,15 @@ export default function Home() {
               required
               rows={3}
               placeholder="Your idea..."
-              className="w-full px-4 py-2 rounded-sm input-blurple text-sm"
+              className="w-full px-4 py-2.5 rounded-sm input-blurple text-sm"
             />
             <input
               name="suggestEmail"
               type="email"
               placeholder="Your email (optional)"
-              className="w-full px-4 py-2 rounded-sm input-blurple text-sm"
+              className="w-full px-4 py-2.5 rounded-sm input-blurple text-sm"
             />
-            <button type="submit" className="btn-gold px-5 py-2 rounded-sm text-sm self-center">
+            <button type="submit" className="btn-gold px-5 py-2.5 rounded-sm text-sm self-center">
               Submit
             </button>
           </form>
@@ -279,9 +273,21 @@ export default function Home() {
         </div>
       </section>
 
-      <footer className="text-center py-8 text-xs text-purple-400/30 border-t border-purple-900/30">
-        <span className="gold-shimmer">MaaS Market</span> &mdash; Wearable Art, Curated
+      {/* Footer */}
+      <footer className="flex flex-col items-center gap-3 py-10 border-t border-purple-900/20">
+        <Image src="/llama.jpeg" alt="MaaS Market" width={32} height={32} className="rounded-full opacity-40" />
+        <p className="text-xs text-purple-400/25">
+          <span className="gold-shimmer">MaaS Market</span> &mdash; Wearable Art, Curated
+        </p>
       </footer>
+
+      {/* Product modal */}
+      {selectedProduct && (
+        <ProductModal
+          product={selectedProduct}
+          onClose={() => setSelectedProduct(null)}
+        />
+      )}
     </div>
   );
 }
