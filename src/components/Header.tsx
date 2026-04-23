@@ -19,10 +19,10 @@ export default function Header() {
               alt="MaaS"
               width={60}
               height={22}
-              className="brightness-[10] drop-shadow-[0_0_4px_rgba(255,255,255,0.3)]"
+              className="drop-shadow-[0_0_4px_rgba(255,255,255,0.3)]"
             />
             <span
-              className="text-xl text-white/90 -ml-0.5 relative"
+              className="text-xl text-white/90 -ml-0.5 -mt-1 relative"
               style={{
                 fontFamily: "var(--font-marker), cursive",
                 textShadow: "0 0 8px rgba(255,255,255,0.2), 2px 2px 0 rgba(0,0,0,0.4)",

@@ -104,10 +104,10 @@ export default function Home() {
             alt="MaaS"
             width={180}
             height={62}
-            className="brightness-[10] drop-shadow-[0_0_20px_rgba(197,164,85,0.3)]"
+            className="drop-shadow-[0_0_20px_rgba(197,164,85,0.3)]"
           />
           <span
-            className="text-4xl md:text-5xl text-white/90 -ml-1 relative"
+            className="text-4xl md:text-5xl text-white/90 -ml-1 -mt-2 relative"
             style={{
               fontFamily: "var(--font-marker), cursive",
               textShadow: "0 0 12px rgba(255,255,255,0.25), 0 0 30px rgba(140,80,220,0.2), 3px 3px 0 rgba(0,0,0,0.5)",
