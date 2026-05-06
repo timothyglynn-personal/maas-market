@@ -49,7 +49,7 @@ export default function ProductFrame({
     <div className="spotlight animate-slide-up flex flex-col items-center gap-4 group cursor-pointer" onClick={onSelect}>
       {/* Item name */}
       <h3
-        className="spray-text text-lg md:text-xl tracking-[0.3em] uppercase text-center text-[#c5a455]"
+        className="spray-text text-lg md:text-xl tracking-[0.3em] uppercase text-center text-[#c5a455] h-14 flex items-center justify-center"
         style={{ fontFamily: "var(--font-marker), cursive" }}
       >
         {product.name}
