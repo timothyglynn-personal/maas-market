@@ -114,23 +114,26 @@ export default function ProductModal({
           <div className="p-8 flex flex-col justify-between flex-1">
             <div>
               <h2
-                className="gold-shimmer text-2xl md:text-3xl font-bold mb-2"
-                style={{ fontFamily: "var(--font-playfair), Georgia, serif" }}
+                className="text-2xl md:text-3xl tracking-[0.2em] uppercase text-[#c5a455] mb-2"
+                style={{ fontFamily: "var(--font-marker), cursive" }}
               >
                 {product.name}
               </h2>
 
-              <p className="text-3xl font-bold text-[#c5a455] mb-6">
+              <p
+                className="text-3xl text-[#c5a455] mb-6 tracking-[0.1em]"
+                style={{ fontFamily: "var(--font-marker), cursive" }}
+              >
                 ${product.price.toFixed(2)}
               </p>
 
               <div className="splatter-divider w-full mb-6" />
 
-              <p className="text-purple-300/60 text-sm leading-relaxed mb-4">
-                Premium wearable art from the MaaS Market collection. Each piece
-                is designed to make a statement — bold, unique, and crafted with
-                care.
-              </p>
+              {product.description && (
+                <p className="text-purple-300/70 text-sm leading-relaxed mb-4">
+                  {product.description}
+                </p>
+              )}
 
               <div className="flex flex-wrap gap-2 mb-6">
                 <span className="px-3 py-1 rounded-full text-xs bg-purple-900/40 text-purple-300/70 border border-purple-700/30">

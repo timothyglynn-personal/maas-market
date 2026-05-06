@@ -59,11 +59,13 @@ export default function Home() {
           const mapped: Product[] = data.map((p: {
             id: string;
             name: string;
+            description: string | null;
             price: number;
             product_images: { url: string; sort_order: number }[];
           }) => ({
             id: p.id,
             name: p.name,
+            description: p.description || undefined,
             price: p.price / 100,
             images: p.product_images
               ?.sort((a: { sort_order: number }, b: { sort_order: number }) => a.sort_order - b.sort_order)
@@ -121,13 +123,6 @@ export default function Home() {
             <span className="absolute -bottom-3 left-[65%] w-[2px] h-[10px] bg-white/20 rounded-b-full" />
           </span>
         </div>
-
-        <p
-          className="text-sm md:text-base tracking-[0.4em] uppercase text-purple-300/50 mb-2"
-          style={{ fontFamily: "var(--font-playfair), Georgia, serif", letterSpacing: "0.4em" }}
-        >
-          Wearable Art, Curated
-        </p>
 
         <div className="splatter-divider w-56 mt-4" />
       </section>

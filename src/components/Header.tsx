@@ -35,15 +35,6 @@ export default function Header() {
           </div>
         </a>
 
-        {/* Search */}
-        <div className="hidden sm:block flex-1 max-w-md mx-8">
-          <input
-            type="text"
-            placeholder="Search the collection..."
-            className="w-full px-4 py-2 rounded-sm input-blurple text-sm"
-          />
-        </div>
-
         {/* Sell button */}
         <a
           href="/sell"
