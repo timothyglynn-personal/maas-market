@@ -29,7 +29,9 @@ export async function POST(req: NextRequest) {
             to: email.trim(),
             subject: "Thanks for your suggestion!",
             html: `<div style="text-align:center; padding:40px; font-family:sans-serif; background:#130c30; color:#fff;">
-              <img src="https://maas-market.com/llama.jpeg" alt="MaaS Market" style="width:80px; height:80px; border-radius:50%; margin-bottom:20px;" />
+              <div style="width:80px; height:80px; border-radius:50%; margin:0 auto 20px; overflow:hidden; border:2px solid #c5a455;">
+                <img src="https://maas-market.com/llama.jpeg" alt="MaaS Market" style="width:100%; height:100%; object-fit:cover;" />
+              </div>
               <h1 style="color:#c5a455; font-size:24px;">Thanks for your content suggestion!</h1>
               <p style="color:#a89cc8;">We appreciate your ideas and will review them soon.</p>
             </div>`,

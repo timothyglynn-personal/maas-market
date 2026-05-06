@@ -46,10 +46,26 @@ const SAMPLE_PRODUCTS: Product[] = [
 
 const ITEMS_PER_PAGE = 4;
 
+function Toast({ message, onClose }: { message: string; onClose: () => void }) {
+  useEffect(() => {
+    const t = setTimeout(onClose, 3000);
+    return () => clearTimeout(t);
+  }, [onClose]);
+
+  return (
+    <div className="fixed top-6 left-1/2 -translate-x-1/2 z-[200] animate-modal-in">
+      <div className="glass-card rounded-lg px-6 py-4 border border-[#c5a455]/30 shadow-[0_0_30px_rgba(197,164,85,0.2)]">
+        <p className="text-[#c5a455] text-sm font-medium">{message}</p>
+      </div>
+    </div>
+  );
+}
+
 export default function Home() {
   const [products, setProducts] = useState<Product[]>(SAMPLE_PRODUCTS);
   const [startIndex, setStartIndex] = useState(0);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [toast, setToast] = useState<string | null>(null);
 
   useEffect(() => {
     fetch("/api/products")
@@ -145,9 +161,13 @@ export default function Home() {
                 body: JSON.stringify({ email: input.value }),
               });
               const data = await res.json();
-              msg.textContent = data.message || data.error;
-              msg.className = res.ok ? "text-sm text-green-400 mt-3" : "text-sm text-red-400 mt-3";
-              if (res.ok) input.value = "";
+              if (res.ok) {
+                input.value = "";
+                setToast(data.message || "You're in!");
+              } else {
+                msg.textContent = data.error;
+                msg.className = "text-sm text-red-400 mt-3";
+              }
             }}
             className="flex gap-2 justify-center mt-4"
           >
@@ -249,9 +269,14 @@ export default function Home() {
                 body: JSON.stringify({ message: messageEl.value, email: emailEl.value }),
               });
               const data = await res.json();
-              msg.textContent = data.message || data.error;
-              msg.className = res.ok ? "text-sm text-green-400 mt-3" : "text-sm text-red-400 mt-3";
-              if (res.ok) { messageEl.value = ""; emailEl.value = ""; }
+              if (res.ok) {
+                messageEl.value = "";
+                emailEl.value = "";
+                setToast(data.message || "Thanks for the suggestion!");
+              } else {
+                msg.textContent = data.error;
+                msg.className = "text-sm text-red-400 mt-3";
+              }
             }}
             className="flex flex-col gap-3"
           >
@@ -291,6 +316,9 @@ export default function Home() {
           onClose={() => setSelectedProduct(null)}
         />
       )}
+
+      {/* Toast notification */}
+      {toast && <Toast message={toast} onClose={() => setToast(null)} />}
     </div>
   );
 }
