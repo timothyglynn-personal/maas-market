@@ -28,7 +28,7 @@ export async function POST(req: NextRequest) {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          from: "MaaS Market <onboarding@resend.dev>",
+          from: "MaaS Market <hello@maas-market.com>",
           to: email,
           subject: "Thank you for signing up to MaaS Market!",
           html: `<div style="text-align:center; padding:40px; font-family:sans-serif; background:#130c30; color:#fff;">
@@ -54,7 +54,7 @@ export async function POST(req: NextRequest) {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          from: "MaaS Market <onboarding@resend.dev>",
+          from: "MaaS Market <hello@maas-market.com>",
           to: "timothyglynn@stripe.com",
           subject: `New subscriber: ${email}`,
           text: `New subscriber: ${email}\n\nAll subscribers to date:\n${allEmails}`,
