@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import Image from "next/image";
 import Header from "@/components/Header";
 import ProductFrame, { Product } from "@/components/ProductFrame";
@@ -52,12 +53,13 @@ function Toast({ message, onClose }: { message: string; onClose: () => void }) {
     return () => clearTimeout(t);
   }, [onClose]);
 
-  return (
+  return createPortal(
     <div className="fixed top-6 left-1/2 -translate-x-1/2 z-[200] animate-modal-in">
       <div className="glass-card rounded-lg px-6 py-4 border border-[#c5a455]/30 shadow-[0_0_30px_rgba(197,164,85,0.2)]">
         <p className="text-[#c5a455] text-sm font-medium">{message}</p>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
 
