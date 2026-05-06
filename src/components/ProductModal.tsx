@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Image from "next/image";
 import { Product } from "./ProductFrame";
 
 export default function ProductModal({
@@ -56,12 +55,11 @@ export default function ProductModal({
         <div className="flex flex-col md:flex-row gap-0">
           {/* Image carousel */}
           <div className="relative w-full md:w-1/2 aspect-[3/4] bg-[#0d0825] flex-shrink-0">
-            <Image
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
               src={product.images[currentImage]}
               alt={product.name}
-              fill
-              className="object-cover"
-              sizes="(max-width: 768px) 100vw, 50vw"
+              className="absolute inset-0 w-full h-full object-cover"
             />
 
             {hasMultiple && (
@@ -98,11 +96,10 @@ export default function ProductModal({
                           : "border-white/20 opacity-60 hover:opacity-100"
                       }`}
                     >
-                      <Image
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
                         src={img}
                         alt=""
-                        width={48}
-                        height={48}
                         className="object-cover w-full h-full"
                       />
                     </button>
