@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { Product } from "./ProductFrame";
 
 export default function ProductModal({
@@ -31,7 +32,7 @@ export default function ProductModal({
     };
   }, [onClose, hasMultiple, product.images.length]);
 
-  return (
+  return createPortal(
     <div
       className="fixed inset-0 z-[100] flex items-center justify-center p-4"
       onClick={onClose}
@@ -164,6 +165,7 @@ export default function ProductModal({
           </div>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
