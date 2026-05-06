@@ -1,0 +1,36 @@
+{
+  "version": 1,
+  "project": {
+    "initializedAt": "2026-04-18T01:14:02.701Z",
+    "merchantDisplayName": null,
+    "merchantId": "acct_1RHlWwE7QVStzx8K",
+    "projectId": "project_61UWlPmoHQHzvziIG16SR9UJNdSQz69TpengbGSFUUVc",
+    "projectName": "maas-market"
+  },
+  "providers": {
+    "supabase": {
+      "accountRequestId": "facctrq_61UWlcAG7D7XSK26l16SR9UJNdSQz69TpengbGSFU144",
+      "linkedAt": "2026-04-18T01:26:59.697Z",
+      "providerId": "prvdr_61UIXYHdsyF69pZbG52n2",
+      "providerName": "Supabase",
+      "redirectUrl": null,
+      "requestedAt": "2026-04-18T01:26:59.696Z",
+      "status": "complete"
+    }
+  },
+  "resources": {
+    "supabase-project": {
+      "configuration": {
+        "name": "maas-market"
+      },
+      "createdAt": "2026-04-18T01:27:19.485Z",
+      "lastRevealedAt": "2026-04-18T01:27:19.632Z",
+      "lastStatus": "complete",
+      "name": "supabase-project",
+      "providerId": "prvdr_61UIXYHdsyF69pZbG52n2",
+      "providerName": "Supabase",
+      "resourceId": "fres_61UWlcMM4svwQ9OS616SR9UJNdSQz69TpengbGSFUHMm",
+      "serviceId": "project"
+    }
+  }
+}

@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import Image from "next/image";
 
 export type Product = {
   id: string;
@@ -65,12 +64,11 @@ export default function ProductFrame({
           <CornerFlourish className="br" />
           <div className="frame-mat relative">
             <div className="relative w-[240px] h-[300px] md:w-[280px] md:h-[350px] overflow-hidden">
-              <Image
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
                 src={product.images[currentImage]}
                 alt={product.name}
-                fill
-                className="object-cover transition-transform duration-700 group-hover:scale-105"
-                sizes="(max-width: 768px) 240px, 280px"
+                className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-black/10 pointer-events-none" />
 
