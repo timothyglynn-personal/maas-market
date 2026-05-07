@@ -8,6 +8,7 @@ export type Product = {
   price: number;
   images: string[];
   description?: string;
+  sellerId?: string;
 };
 
 // SVG corner flourish
@@ -126,9 +127,7 @@ export default function ProductFrame({
               body: JSON.stringify({
                 productName: product.name,
                 priceInCents: Math.round(product.price * 100),
-                connectedAccountId:
-                  process.env.NEXT_PUBLIC_STRIPE_CONNECTED_ACCOUNT_ID ||
-                  "acct_1TNigiE9MgvpljEt",
+                connectedAccountId: product.sellerId,
               }),
             });
             const { url } = await res.json();

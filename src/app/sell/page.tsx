@@ -52,14 +52,20 @@ function SellPageInner() {
           {onboardingComplete ? (
             <div className="text-center glass-card rounded-lg p-10">
               <h1
-                className="gold-shimmer text-3xl font-bold mb-4"
-                style={{ fontFamily: "var(--font-playfair), Georgia, serif" }}
+                className="text-3xl tracking-[0.2em] uppercase text-[#c5a455] mb-4"
+                style={{ fontFamily: "var(--font-marker), cursive" }}
               >
-                Welcome to MaaS Market
+                You&apos;re All Set!
               </h1>
-              <p className="text-purple-300/60 mb-6">
-                Your seller account is being set up. You&apos;ll be able to
-                list products once your account is verified.
+              <p className="text-purple-300/60 mb-4">
+                Your seller account is ready. Check your email for instructions on how to list your products.
+              </p>
+              <p className="text-purple-300/40 text-sm mb-6">
+                To list items, send your product photos, names, descriptions, and prices to{" "}
+                <a href="mailto:timothyglynn@stripe.com" className="text-[#c5a455] underline">
+                  timothyglynn@stripe.com
+                </a>{" "}
+                and we&apos;ll get them up on the marketplace for you.
               </p>
               <a href="/" className="btn-gold inline-block px-6 py-2 rounded-sm text-sm">
                 Browse the Gallery

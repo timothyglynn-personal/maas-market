@@ -19,11 +19,16 @@ export async function GET() {
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
 
+  const fallbackSeller = process.env.STRIPE_CONNECTED_ACCOUNT_ID || "";
+
   const sorted = (data || []).sort((a, b) => {
     const aIdx = DISPLAY_ORDER.indexOf(a.name);
     const bIdx = DISPLAY_ORDER.indexOf(b.name);
     return (aIdx === -1 ? 999 : aIdx) - (bIdx === -1 ? 999 : bIdx);
-  });
+  }).map((p) => ({
+    ...p,
+    seller_id: p.seller_id || fallbackSeller,
+  }));
 
   return NextResponse.json(sorted);
 }

@@ -41,6 +41,45 @@ export async function POST(req: NextRequest) {
       status: "pending",
     });
 
+    // 3. Send welcome email to seller
+    if (process.env.RESEND_API_KEY) {
+      await fetch("https://api.resend.com/emails", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${process.env.RESEND_API_KEY}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          from: "MaaS Market <hello@maas-market.com>",
+          to: email,
+          subject: "Welcome to MaaS Market - You're ready to sell!",
+          html: `<div style="text-align:center; padding:40px; font-family:sans-serif; background:#130c30; color:#fff;">
+            <div style="width:80px; height:80px; border-radius:50%; margin:0 auto 20px; overflow:hidden; border:2px solid #c5a455;">
+              <img src="https://maas-market.com/llama.jpeg" alt="MaaS Market" style="width:100%; height:100%; object-fit:cover;" />
+            </div>
+            <h1 style="color:#c5a455; font-size:24px;">Welcome to MaaS Market!</h1>
+            <p style="color:#a89cc8;">Your seller account is being set up. Once verified, you can start listing your products.</p>
+            <p style="color:#a89cc8; margin-top:20px;">To list items, send your product photos, names, descriptions, and prices to <a href="mailto:timothyglynn@stripe.com" style="color:#c5a455;">timothyglynn@stripe.com</a></p>
+          </div>`,
+        }),
+      });
+
+      // Notify admin
+      await fetch("https://api.resend.com/emails", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${process.env.RESEND_API_KEY}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          from: "MaaS Market <hello@maas-market.com>",
+          to: "timothyglynn@stripe.com",
+          subject: `New seller onboarded: ${name} (${email})`,
+          text: `New seller signed up:\n\nName: ${name}\nEmail: ${email}\nStripe Account: ${account.id}\n\nThey've been directed to email you with their product details.`,
+        }),
+      });
+    }
+
     // 3. Create account onboarding link
     const linkParams = new URLSearchParams();
     linkParams.append("account", account.id);

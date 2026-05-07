@@ -47,6 +47,26 @@ export async function POST(req: NextRequest) {
   return NextResponse.json(product, { status: 201 });
 }
 
+export async function PATCH(req: NextRequest) {
+  const supabase = createAdminClient();
+  const body = await req.json();
+  const { id, name, description, price, status, seller_id } = body;
+
+  if (!id) return NextResponse.json({ error: "Missing id" }, { status: 400 });
+
+  const updates: Record<string, unknown> = {};
+  if (name !== undefined) updates.name = name;
+  if (description !== undefined) updates.description = description;
+  if (price !== undefined) updates.price = price;
+  if (status !== undefined) updates.status = status;
+  if (seller_id !== undefined) updates.seller_id = seller_id || null;
+
+  const { error } = await supabase.from("products").update(updates).eq("id", id);
+  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+
+  return NextResponse.json({ ok: true });
+}
+
 export async function DELETE(req: NextRequest) {
   const supabase = createAdminClient();
   const { searchParams } = new URL(req.url);

@@ -14,14 +14,22 @@ type ProductWithImages = {
 export default function AdminPage() {
   const [products, setProducts] = useState<ProductWithImages[]>([]);
   const [loading, setLoading] = useState(true);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editName, setEditName] = useState("");
+  const [editDescription, setEditDescription] = useState("");
+  const [editPrice, setEditPrice] = useState("");
+  const [editStatus, setEditStatus] = useState("");
+  const [editSaving, setEditSaving] = useState(false);
 
   // Form state
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState("");
   const [status, setStatus] = useState("draft");
+  const [sellerId, setSellerId] = useState("");
   const [imageUrls, setImageUrls] = useState("");
   const [saving, setSaving] = useState(false);
+  const [sellers, setSellers] = useState<{ stripe_account_id: string; name: string; email: string }[]>([]);
 
   async function loadProducts() {
     const res = await fetch("/api/admin/products");
@@ -32,6 +40,7 @@ export default function AdminPage() {
 
   useEffect(() => {
     loadProducts();
+    fetch("/api/admin/sellers").then(r => r.json()).then(setSellers).catch(() => {});
   }, []);
 
   async function handleSubmit(e: React.FormEvent) {
@@ -49,9 +58,9 @@ export default function AdminPage() {
       body: JSON.stringify({
         name,
         description: description || null,
-        price: Math.round(parseFloat(price) * 100), // convert to cents
+        price: Math.round(parseFloat(price) * 100),
         status,
-        seller_id: null, // will be set once Connect is wired up
+        seller_id: sellerId || null,
         images,
       }),
     });
@@ -61,11 +70,39 @@ export default function AdminPage() {
       setDescription("");
       setPrice("");
       setStatus("draft");
+      setSellerId("");
       setImageUrls("");
       await loadProducts();
     }
 
     setSaving(false);
+  }
+
+  function startEdit(p: ProductWithImages) {
+    setEditingId(p.id);
+    setEditName(p.name);
+    setEditDescription(p.description || "");
+    setEditPrice((p.price / 100).toFixed(2));
+    setEditStatus(p.status);
+  }
+
+  async function handleSaveEdit() {
+    if (!editingId) return;
+    setEditSaving(true);
+    await fetch("/api/admin/products", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        id: editingId,
+        name: editName,
+        description: editDescription || null,
+        price: Math.round(parseFloat(editPrice) * 100),
+        status: editStatus,
+      }),
+    });
+    setEditingId(null);
+    setEditSaving(false);
+    await loadProducts();
   }
 
   async function handleDelete(id: string) {
@@ -147,7 +184,7 @@ export default function AdminPage() {
             />
           </div>
 
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-4 flex-wrap">
             <select
               value={status}
               onChange={(e) => setStatus(e.target.value)}
@@ -156,6 +193,19 @@ export default function AdminPage() {
               <option value="draft">Draft</option>
               <option value="active">Active (visible on store)</option>
               <option value="sold_out">Sold Out</option>
+            </select>
+
+            <select
+              value={sellerId}
+              onChange={(e) => setSellerId(e.target.value)}
+              className="px-3 py-2 bg-neutral-800 border border-neutral-700 rounded text-sm focus:outline-none focus:border-[#c5a455]/50"
+            >
+              <option value="">No seller (platform)</option>
+              {sellers.map((s) => (
+                <option key={s.stripe_account_id} value={s.stripe_account_id}>
+                  {s.name} ({s.email})
+                </option>
+              ))}
             </select>
 
             <button
@@ -188,48 +238,111 @@ export default function AdminPage() {
             {products.map((p) => (
               <div
                 key={p.id}
-                className="bg-neutral-900 border border-neutral-800 rounded-lg p-4 flex items-start justify-between gap-4"
+                className="bg-neutral-900 border border-neutral-800 rounded-lg p-4"
               >
-                <div className="flex gap-4">
-                  {p.product_images?.[0] && (
-                    <img
-                      src={p.product_images[0].url}
-                      alt={p.name}
-                      className="w-16 h-20 object-cover rounded"
+                {editingId === p.id ? (
+                  <div className="space-y-3">
+                    <div className="grid grid-cols-2 gap-3">
+                      <input
+                        value={editName}
+                        onChange={(e) => setEditName(e.target.value)}
+                        className="px-3 py-2 bg-neutral-800 border border-neutral-700 rounded text-sm focus:outline-none focus:border-[#c5a455]/50"
+                        placeholder="Name"
+                      />
+                      <input
+                        type="number"
+                        step="0.01"
+                        value={editPrice}
+                        onChange={(e) => setEditPrice(e.target.value)}
+                        className="px-3 py-2 bg-neutral-800 border border-neutral-700 rounded text-sm focus:outline-none focus:border-[#c5a455]/50"
+                        placeholder="Price ($)"
+                      />
+                    </div>
+                    <textarea
+                      value={editDescription}
+                      onChange={(e) => setEditDescription(e.target.value)}
+                      rows={2}
+                      className="w-full px-3 py-2 bg-neutral-800 border border-neutral-700 rounded text-sm focus:outline-none focus:border-[#c5a455]/50"
+                      placeholder="Description"
                     />
-                  )}
-                  <div>
-                    <h3 className="font-semibold">{p.name}</h3>
-                    <p className="text-sm text-neutral-400">
-                      ${(p.price / 100).toFixed(2)} &middot;{" "}
-                      <span
-                        className={
-                          p.status === "active"
-                            ? "text-green-400"
-                            : p.status === "draft"
-                            ? "text-yellow-400"
-                            : "text-red-400"
-                        }
+                    <div className="flex gap-3">
+                      <select
+                        value={editStatus}
+                        onChange={(e) => setEditStatus(e.target.value)}
+                        className="px-3 py-2 bg-neutral-800 border border-neutral-700 rounded text-sm focus:outline-none focus:border-[#c5a455]/50"
                       >
-                        {p.status}
-                      </span>
-                    </p>
-                    {p.description && (
-                      <p className="text-xs text-neutral-500 mt-1">
-                        {p.description}
-                      </p>
-                    )}
-                    <p className="text-xs text-neutral-600 mt-1">
-                      {p.product_images?.length || 0} image(s)
-                    </p>
+                        <option value="draft">Draft</option>
+                        <option value="active">Active</option>
+                        <option value="sold_out">Sold Out</option>
+                      </select>
+                      <button
+                        onClick={handleSaveEdit}
+                        disabled={editSaving}
+                        className="px-4 py-2 rounded text-sm font-semibold disabled:opacity-50"
+                        style={{ background: "linear-gradient(135deg, #c5a455, #a68a3e)", color: "#1a1714" }}
+                      >
+                        {editSaving ? "Saving..." : "Save"}
+                      </button>
+                      <button
+                        onClick={() => setEditingId(null)}
+                        className="text-sm text-neutral-400 hover:text-neutral-200"
+                      >
+                        Cancel
+                      </button>
+                    </div>
                   </div>
-                </div>
-                <button
-                  onClick={() => handleDelete(p.id)}
-                  className="text-sm text-red-400 hover:text-red-300"
-                >
-                  Delete
-                </button>
+                ) : (
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="flex gap-4">
+                      {p.product_images?.[0] && (
+                        <img
+                          src={p.product_images[0].url}
+                          alt={p.name}
+                          className="w-16 h-20 object-cover rounded"
+                        />
+                      )}
+                      <div>
+                        <h3 className="font-semibold">{p.name}</h3>
+                        <p className="text-sm text-neutral-400">
+                          ${(p.price / 100).toFixed(2)} &middot;{" "}
+                          <span
+                            className={
+                              p.status === "active"
+                                ? "text-green-400"
+                                : p.status === "draft"
+                                ? "text-yellow-400"
+                                : "text-red-400"
+                            }
+                          >
+                            {p.status}
+                          </span>
+                        </p>
+                        {p.description && (
+                          <p className="text-xs text-neutral-500 mt-1">
+                            {p.description}
+                          </p>
+                        )}
+                        <p className="text-xs text-neutral-600 mt-1">
+                          {p.product_images?.length || 0} image(s)
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex gap-3">
+                      <button
+                        onClick={() => startEdit(p)}
+                        className="text-sm text-[#c5a455] hover:text-[#d4b96a]"
+                      >
+                        Edit
+                      </button>
+                      <button
+                        onClick={() => handleDelete(p.id)}
+                        className="text-sm text-red-400 hover:text-red-300"
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
             ))}
           </div>
