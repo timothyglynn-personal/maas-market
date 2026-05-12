@@ -7,44 +7,6 @@ import Header from "@/components/Header";
 import ProductFrame, { Product } from "@/components/ProductFrame";
 import ProductModal from "@/components/ProductModal";
 
-const SAMPLE_PRODUCTS: Product[] = [
-  {
-    id: "1",
-    name: "The Original",
-    price: 45.0,
-    images: [
-      "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=600&h=750&fit=crop",
-      "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=600&h=750&fit=crop",
-    ],
-  },
-  {
-    id: "2",
-    name: "Gallery Edition",
-    price: 55.0,
-    images: [
-      "https://images.unsplash.com/photo-1618354691373-d851c5c3a990?w=600&h=750&fit=crop",
-    ],
-  },
-  {
-    id: "3",
-    name: "Street Canvas",
-    price: 50.0,
-    images: [
-      "https://images.unsplash.com/photo-1576566588028-4147f3842f27?w=600&h=750&fit=crop",
-      "https://images.unsplash.com/photo-1562157873-818bc0726f68?w=600&h=750&fit=crop",
-      "https://images.unsplash.com/photo-1503341504253-dff4f94032fc?w=600&h=750&fit=crop",
-    ],
-  },
-  {
-    id: "4",
-    name: "Monochrome",
-    price: 48.0,
-    images: [
-      "https://images.unsplash.com/photo-1489987707025-afc232f7ea0f?w=600&h=750&fit=crop",
-    ],
-  },
-];
-
 const ITEMS_PER_PAGE = 4;
 
 function Toast({ message, onClose }: { message: string; onClose: () => void }) {
@@ -64,7 +26,7 @@ function Toast({ message, onClose }: { message: string; onClose: () => void }) {
 }
 
 export default function Home() {
-  const [products, setProducts] = useState<Product[]>(SAMPLE_PRODUCTS);
+  const [products, setProducts] = useState<Product[]>([]);
   const [startIndex, setStartIndex] = useState(0);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [toast, setToast] = useState<string | null>(null);
