@@ -21,7 +21,7 @@ const marker = Permanent_Marker({
 
 export const metadata: Metadata = {
   title: "MaaS Market",
-  description: "Wearable art, curated. A marketplace for the bold.",
+  description: "MaaS Market",
 };
 
 export default function RootLayout({

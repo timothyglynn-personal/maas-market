@@ -4,7 +4,7 @@ export const runtime = "nodejs";
 
 export async function POST(req: NextRequest) {
   try {
-    const { productName, priceInCents, connectedAccountId } = await req.json();
+    const { productName, priceInCents } = await req.json();
     const origin = req.headers.get("origin") || "http://localhost:3000";
 
     const params = new URLSearchParams();
@@ -13,12 +13,13 @@ export async function POST(req: NextRequest) {
     params.append("line_items[0][price_data][product_data][name]", productName);
     params.append("line_items[0][price_data][unit_amount]", String(priceInCents));
     params.append("line_items[0][quantity]", "1");
-    params.append("payment_intent_data[application_fee_amount]", String(Math.round(priceInCents * 0.1)));
-    params.append("payment_intent_data[transfer_data][destination]", connectedAccountId);
     params.append("shipping_address_collection[allowed_countries][0]", "US");
-    params.append("shipping_address_collection[allowed_countries][1]", "CA");
-    params.append("shipping_address_collection[allowed_countries][2]", "GB");
-    params.append("shipping_address_collection[allowed_countries][3]", "IE");
+    params.append("shipping_address_collection[allowed_countries][1]", "GB");
+    params.append("shipping_address_collection[allowed_countries][2]", "IE");
+    params.append("custom_fields[0][key]", "size");
+    params.append("custom_fields[0][label][type]", "custom");
+    params.append("custom_fields[0][label][custom]", "Size (S / M / L / XL)");
+    params.append("custom_fields[0][type]", "text");
     params.append("success_url", `${origin}?success=true`);
     params.append("cancel_url", `${origin}?canceled=true`);
 

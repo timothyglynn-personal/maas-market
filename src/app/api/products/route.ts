@@ -14,12 +14,10 @@ export async function GET() {
   const supabase = createAdminClient();
   const { data, error } = await supabase
     .from("products")
-    .select("*, product_images(*)")
+    .select("*, product_images(*), sellers(stripe_account_id)")
     .eq("status", "active");
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
-
-  const fallbackSeller = process.env.STRIPE_CONNECTED_ACCOUNT_ID || "";
 
   const sorted = (data || []).sort((a, b) => {
     const aIdx = DISPLAY_ORDER.indexOf(a.name);
@@ -27,7 +25,7 @@ export async function GET() {
     return (aIdx === -1 ? 999 : aIdx) - (bIdx === -1 ? 999 : bIdx);
   }).map((p) => ({
     ...p,
-    seller_id: p.seller_id || fallbackSeller,
+    seller_id: p.sellers?.stripe_account_id || "",
   }));
 
   return NextResponse.json(sorted);

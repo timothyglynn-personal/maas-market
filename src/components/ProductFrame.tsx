@@ -119,8 +119,10 @@ export default function ProductFrame({
           ${product.price.toFixed(2)}
         </span>
         <button
+          onPointerDown={(e) => e.stopPropagation()}
           onClick={async (e) => {
             e.stopPropagation();
+            e.preventDefault();
             const res = await fetch("/api/checkout", {
               method: "POST",
               headers: { "Content-Type": "application/json" },

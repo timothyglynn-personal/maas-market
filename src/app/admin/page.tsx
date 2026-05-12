@@ -29,7 +29,8 @@ export default function AdminPage() {
   const [sellerId, setSellerId] = useState("");
   const [imageUrls, setImageUrls] = useState("");
   const [saving, setSaving] = useState(false);
-  const [sellers, setSellers] = useState<{ stripe_account_id: string; name: string; email: string }[]>([]);
+  const [formError, setFormError] = useState("");
+  const [sellers, setSellers] = useState<{ id: string; stripe_account_id: string; name: string; email: string }[]>([]);
 
   async function loadProducts() {
     const res = await fetch("/api/admin/products");
@@ -46,33 +47,42 @@ export default function AdminPage() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setSaving(true);
+    setFormError("");
 
     const images = imageUrls
       .split("\n")
       .map((u) => u.trim())
       .filter(Boolean);
 
-    const res = await fetch("/api/admin/products", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        name,
-        description: description || null,
-        price: Math.round(parseFloat(price) * 100),
-        status,
-        seller_id: sellerId || null,
-        images,
-      }),
-    });
+    try {
+      const res = await fetch("/api/admin/products", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name,
+          description: description || null,
+          price: Math.round(parseFloat(price) * 100),
+          status,
+          seller_id: sellerId || null,
+          images,
+        }),
+      });
 
-    if (res.ok) {
-      setName("");
-      setDescription("");
-      setPrice("");
-      setStatus("draft");
-      setSellerId("");
-      setImageUrls("");
-      await loadProducts();
+      const data = await res.json();
+
+      if (!res.ok) {
+        setFormError(data.error || `Server error (${res.status})`);
+      } else {
+        setName("");
+        setDescription("");
+        setPrice("");
+        setStatus("draft");
+        setSellerId("");
+        setImageUrls("");
+        await loadProducts();
+      }
+    } catch (err) {
+      setFormError(`Network error: ${err}`);
     }
 
     setSaving(false);
@@ -184,6 +194,12 @@ export default function AdminPage() {
             />
           </div>
 
+          {formError && (
+            <div className="mb-4 p-3 bg-red-900/50 border border-red-700 rounded text-sm text-red-200">
+              {formError}
+            </div>
+          )}
+
           <div className="flex items-center gap-4 flex-wrap">
             <select
               value={status}
@@ -202,7 +218,7 @@ export default function AdminPage() {
             >
               <option value="">No seller (platform)</option>
               {sellers.map((s) => (
-                <option key={s.stripe_account_id} value={s.stripe_account_id}>
+                <option key={s.id} value={s.id}>
                   {s.name} ({s.email})
                 </option>
               ))}

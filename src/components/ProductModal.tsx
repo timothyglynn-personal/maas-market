@@ -139,9 +139,6 @@ export default function ProductModal({
                 <span className="px-3 py-1 rounded-full text-xs bg-purple-900/40 text-purple-300/70 border border-purple-700/30">
                   Limited Edition
                 </span>
-                <span className="px-3 py-1 rounded-full text-xs bg-purple-900/40 text-purple-300/70 border border-purple-700/30">
-                  Free Shipping
-                </span>
               </div>
             </div>
 

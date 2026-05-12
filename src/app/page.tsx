@@ -86,7 +86,7 @@ export default function Home() {
             name: p.name,
             description: p.description || undefined,
             price: p.price / 100,
-            sellerId: p.seller_id || process.env.NEXT_PUBLIC_STRIPE_CONNECTED_ACCOUNT_ID || "",
+            sellerId: p.seller_id || "",
             images: p.product_images
               ?.sort((a: { sort_order: number }, b: { sort_order: number }) => a.sort_order - b.sort_order)
               .map((img: { url: string }) => img.url) || [],
