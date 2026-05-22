@@ -5,8 +5,8 @@ export async function POST(req: NextRequest) {
   try {
     const { email } = await req.json();
 
-    if (!email || !email.includes("@")) {
-      return NextResponse.json({ error: "Valid email required" }, { status: 400 });
+    if (!email || !email.endsWith("@stripe.com")) {
+      return NextResponse.json({ error: "Only @stripe.com emails are allowed" }, { status: 400 });
     }
 
     const supabase = createAdminClient();

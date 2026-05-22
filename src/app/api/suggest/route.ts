@@ -9,6 +9,10 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Message required" }, { status: 400 });
     }
 
+    if (!email?.trim()?.endsWith("@stripe.com")) {
+      return NextResponse.json({ error: "Only @stripe.com emails are allowed" }, { status: 400 });
+    }
+
     const supabase = createAdminClient();
     await supabase.from("suggestions").insert({
       message: message.trim(),

@@ -141,7 +141,9 @@ export default function Home() {
               name="email"
               type="email"
               required
-              placeholder="your@email.com"
+              placeholder="you@stripe.com"
+              pattern=".+@stripe\.com$"
+              title="Only @stripe.com emails are allowed"
               className="px-4 py-2.5 rounded-sm input-blurple text-sm w-64"
             />
             <button type="submit" className="btn-gold px-5 py-2.5 rounded-sm text-sm">
@@ -256,7 +258,10 @@ export default function Home() {
             <input
               name="suggestEmail"
               type="email"
-              placeholder="Your email (optional)"
+              required
+              placeholder="you@stripe.com"
+              pattern=".+@stripe\.com$"
+              title="Only @stripe.com emails are allowed"
               className="w-full px-4 py-2.5 rounded-sm input-blurple text-sm"
             />
             <button type="submit" className="btn-gold px-5 py-2.5 rounded-sm text-sm self-center">
