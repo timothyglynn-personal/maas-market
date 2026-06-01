@@ -60,7 +60,7 @@ export default function ProductModal({
             <img
               src={product.images[currentImage]}
               alt={product.name}
-              className="absolute inset-0 w-full h-full object-cover"
+              className="absolute inset-0 w-full h-full object-contain"
             />
 
             {hasMultiple && (

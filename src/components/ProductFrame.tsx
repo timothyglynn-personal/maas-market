@@ -64,12 +64,12 @@ export default function ProductFrame({
           <CornerFlourish className="bl" />
           <CornerFlourish className="br" />
           <div className="frame-mat relative">
-            <div className="relative w-[240px] h-[300px] md:w-[280px] md:h-[350px] overflow-hidden">
+            <div className="relative w-[240px] h-[300px] md:w-[280px] md:h-[350px] overflow-hidden bg-[#0d0825]">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={product.images[currentImage]}
                 alt={product.name}
-                className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                className="absolute inset-0 w-full h-full object-contain transition-transform duration-700 group-hover:scale-[1.02]"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-black/10 pointer-events-none" />
 

@@ -1,11 +1,12 @@
 import Image from "next/image";
+import Link from "next/link";
 
 export default function Header() {
   return (
     <header className="w-full border-b border-purple-900/40 bg-[#130c30]/90 backdrop-blur-md sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
         {/* Logo + Wordmark */}
-        <a href="/" className="flex items-center gap-3">
+        <Link href="/" className="flex items-center gap-3">
           <Image
             src="/llama.jpeg"
             alt="MaaS Market mascot"
@@ -33,15 +34,15 @@ export default function Header() {
               Market
             </span>
           </div>
-        </a>
+        </Link>
 
         {/* Sell button */}
-        <a
+        <Link
           href="/sell"
           className="btn-gold px-4 py-2 rounded-sm text-xs cursor-pointer"
         >
           Sell on MaaS
-        </a>
+        </Link>
       </div>
     </header>
   );

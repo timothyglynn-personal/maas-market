@@ -7,8 +7,6 @@ import Header from "@/components/Header";
 import ProductFrame, { Product } from "@/components/ProductFrame";
 import ProductModal from "@/components/ProductModal";
 
-const ITEMS_PER_PAGE = 4;
-
 function Toast({ message, onClose }: { message: string; onClose: () => void }) {
   useEffect(() => {
     const t = setTimeout(onClose, 3000);
@@ -27,7 +25,6 @@ function Toast({ message, onClose }: { message: string; onClose: () => void }) {
 
 export default function Home() {
   const [products, setProducts] = useState<Product[]>([]);
-  const [startIndex, setStartIndex] = useState(0);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [toast, setToast] = useState<string | null>(null);
 
@@ -58,17 +55,6 @@ export default function Home() {
       })
       .catch(() => {});
   }, []);
-
-  const totalPages = Math.ceil(products.length / ITEMS_PER_PAGE);
-  const currentPage = Math.floor(startIndex / ITEMS_PER_PAGE);
-  const visibleProducts = products.slice(startIndex, startIndex + ITEMS_PER_PAGE);
-
-  function goNext() {
-    setStartIndex((i) => i + ITEMS_PER_PAGE >= products.length ? 0 : i + ITEMS_PER_PAGE);
-  }
-  function goPrev() {
-    setStartIndex((i) => i - ITEMS_PER_PAGE < 0 ? Math.max(0, products.length - ITEMS_PER_PAGE) : i - ITEMS_PER_PAGE);
-  }
 
   return (
     <div className="gallery-wall min-h-screen flex flex-col">
@@ -163,54 +149,15 @@ export default function Home() {
           Current Exhibition
         </p>
 
-        <div className="flex items-center gap-4 md:gap-8 w-full max-w-7xl justify-center">
-          {totalPages > 1 && (
-            <button
-              onClick={goPrev}
-              className="w-12 h-12 rounded-full border-2 border-purple-700/40 text-purple-400/50 flex items-center justify-center text-lg hover:border-[#c5a455] hover:text-[#c5a455] hover:shadow-[0_0_20px_rgba(197,164,85,0.25)] transition-all shrink-0"
-              aria-label="Previous items"
-            >
-              &lsaquo;
-            </button>
-          )}
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-12">
-            {visibleProducts.map((product) => (
-              <ProductFrame
-                key={product.id}
-                product={product}
-                onSelect={() => setSelectedProduct(product)}
-              />
-            ))}
-          </div>
-
-          {totalPages > 1 && (
-            <button
-              onClick={goNext}
-              className="w-12 h-12 rounded-full border-2 border-purple-700/40 text-purple-400/50 flex items-center justify-center text-lg hover:border-[#c5a455] hover:text-[#c5a455] hover:shadow-[0_0_20px_rgba(197,164,85,0.25)] transition-all shrink-0"
-              aria-label="Next items"
-            >
-              &rsaquo;
-            </button>
-          )}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-12 w-full max-w-7xl justify-items-center">
+          {products.map((product) => (
+            <ProductFrame
+              key={product.id}
+              product={product}
+              onSelect={() => setSelectedProduct(product)}
+            />
+          ))}
         </div>
-
-        {totalPages > 1 && (
-          <div className="flex gap-3 mt-10">
-            {Array.from({ length: totalPages }).map((_, i) => (
-              <button
-                key={i}
-                onClick={() => setStartIndex(i * ITEMS_PER_PAGE)}
-                className={`w-3 h-3 rounded-full transition-all ${
-                  i === currentPage
-                    ? "bg-[#c5a455] shadow-[0_0_10px_rgba(197,164,85,0.6)]"
-                    : "bg-purple-700/30 hover:bg-purple-500/40"
-                }`}
-                aria-label={`Page ${i + 1}`}
-              />
-            ))}
-          </div>
-        )}
       </main>
 
       <div className="splatter-divider w-72 mx-auto" />

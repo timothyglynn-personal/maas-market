@@ -1,6 +1,7 @@
 "use client";
 
 import { Suspense, useState } from "react";
+import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import Header from "@/components/Header";
 
@@ -67,9 +68,9 @@ function SellPageInner() {
                 </a>{" "}
                 and we&apos;ll get them up on the marketplace for you.
               </p>
-              <a href="/" className="btn-gold inline-block px-6 py-2 rounded-sm text-sm">
+              <Link href="/" className="btn-gold inline-block px-6 py-2 rounded-sm text-sm">
                 Browse the Gallery
-              </a>
+              </Link>
             </div>
           ) : (
             <>

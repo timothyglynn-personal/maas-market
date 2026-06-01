@@ -11,6 +11,25 @@ type ProductWithImages = {
   product_images: { id: string; url: string; sort_order: number }[];
 };
 
+type Seller = {
+  id: string;
+  stripe_account_id: string | null;
+  name: string;
+  email: string;
+};
+
+type SelectedImage = {
+  file: File;
+  previewUrl: string;
+};
+
+const MAX_IMAGE_SIZE = 10 * 1024 * 1024;
+const ALLOWED_IMAGE_TYPES = new Set(["image/jpeg", "image/png", "image/webp"]);
+
+function getDefaultSellerId(sellers: Seller[]) {
+  return sellers.find((seller) => seller.stripe_account_id)?.id || sellers[0]?.id || "";
+}
+
 export default function AdminPage() {
   const [products, setProducts] = useState<ProductWithImages[]>([]);
   const [loading, setLoading] = useState(true);
@@ -25,12 +44,13 @@ export default function AdminPage() {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState("");
-  const [status, setStatus] = useState("draft");
+  const [status, setStatus] = useState("active");
   const [sellerId, setSellerId] = useState("");
+  const [selectedImages, setSelectedImages] = useState<SelectedImage[]>([]);
   const [imageUrls, setImageUrls] = useState("");
   const [saving, setSaving] = useState(false);
   const [formError, setFormError] = useState("");
-  const [sellers, setSellers] = useState<{ id: string; stripe_account_id: string; name: string; email: string }[]>([]);
+  const [sellers, setSellers] = useState<Seller[]>([]);
 
   async function loadProducts() {
     const res = await fetch("/api/admin/products");
@@ -41,20 +61,98 @@ export default function AdminPage() {
 
   useEffect(() => {
     loadProducts();
-    fetch("/api/admin/sellers").then(r => r.json()).then(setSellers).catch(() => {});
+    fetch("/api/admin/sellers")
+      .then(r => r.json())
+      .then((data: Seller[]) => {
+        setSellers(data);
+        setSellerId((current) => current || getDefaultSellerId(data));
+      })
+      .catch(() => {});
   }, []);
+
+  function clearSelectedImages() {
+    selectedImages.forEach((image) => URL.revokeObjectURL(image.previewUrl));
+    setSelectedImages([]);
+  }
+
+  function handleImageChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const files = Array.from(e.target.files || []);
+
+    for (const file of files) {
+      if (!ALLOWED_IMAGE_TYPES.has(file.type)) {
+        setFormError(`${file.name} must be a PNG, JPEG, or WebP image.`);
+        e.target.value = "";
+        return;
+      }
+
+      if (file.size > MAX_IMAGE_SIZE) {
+        setFormError(`${file.name} must be 10 MB or smaller.`);
+        e.target.value = "";
+        return;
+      }
+    }
+
+    setFormError("");
+    setSelectedImages((current) => [
+      ...current,
+      ...files.map((file) => ({
+        file,
+        previewUrl: URL.createObjectURL(file),
+      })),
+    ]);
+    e.target.value = "";
+  }
+
+  function removeSelectedImage(index: number) {
+    setSelectedImages((current) => {
+      const image = current[index];
+      if (image) URL.revokeObjectURL(image.previewUrl);
+      return current.filter((_, i) => i !== index);
+    });
+  }
+
+  function moveSelectedImage(index: number, direction: -1 | 1) {
+    setSelectedImages((current) => {
+      const nextIndex = index + direction;
+      if (nextIndex < 0 || nextIndex >= current.length) return current;
+
+      const reordered = [...current];
+      const [image] = reordered.splice(index, 1);
+      reordered.splice(nextIndex, 0, image);
+      return reordered;
+    });
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setSaving(true);
     setFormError("");
 
-    const images = imageUrls
+    const pastedImageUrls = imageUrls
       .split("\n")
       .map((u) => u.trim())
       .filter(Boolean);
 
     try {
+      let uploadedImageUrls: string[] = [];
+
+      if (selectedImages.length > 0) {
+        const formData = new FormData();
+        selectedImages.forEach((image) => formData.append("files", image.file));
+
+        const uploadRes = await fetch("/api/admin/upload", {
+          method: "POST",
+          body: formData,
+        });
+        const uploadData = await uploadRes.json();
+
+        if (!uploadRes.ok) {
+          throw new Error(uploadData.error || `Upload failed (${uploadRes.status})`);
+        }
+
+        uploadedImageUrls = uploadData.urls || [];
+      }
+
       const res = await fetch("/api/admin/products", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -64,7 +162,7 @@ export default function AdminPage() {
           price: Math.round(parseFloat(price) * 100),
           status,
           seller_id: sellerId || null,
-          images,
+          images: [...uploadedImageUrls, ...pastedImageUrls],
         }),
       });
 
@@ -76,16 +174,17 @@ export default function AdminPage() {
         setName("");
         setDescription("");
         setPrice("");
-        setStatus("draft");
-        setSellerId("");
+        setStatus("active");
+        setSellerId((current) => current || getDefaultSellerId(sellers));
+        clearSelectedImages();
         setImageUrls("");
         await loadProducts();
       }
     } catch (err) {
-      setFormError(`Network error: ${err}`);
+      setFormError(err instanceof Error ? err.message : `Network error: ${err}`);
+    } finally {
+      setSaving(false);
     }
-
-    setSaving(false);
   }
 
   function startEdit(p: ProductWithImages) {
@@ -183,7 +282,80 @@ export default function AdminPage() {
 
           <div className="mb-4">
             <label className="block text-sm text-neutral-400 mb-1">
-              Image URLs (one per line)
+              Upload Images
+            </label>
+            <input
+              type="file"
+              accept="image/png,image/jpeg,image/webp"
+              multiple
+              onChange={handleImageChange}
+              className="block w-full text-sm text-neutral-300 file:mr-4 file:rounded file:border-0 file:bg-[#c5a455] file:px-4 file:py-2 file:text-sm file:font-semibold file:text-neutral-950 hover:file:bg-[#d4b96a]"
+            />
+            <p className="mt-2 text-xs text-neutral-500">
+              PNG, JPEG, or WebP. Up to 10 MB per image. Image 1 is displayed first on the marketplace.
+            </p>
+
+            {selectedImages.length > 0 && (
+              <div className="mt-3">
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                  {selectedImages.map((image, i) => (
+                    <div key={image.previewUrl} className="rounded border border-neutral-800 bg-neutral-950 p-2">
+                      <div className="relative">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          src={image.previewUrl}
+                          alt={`Selected image ${i + 1}`}
+                          className="h-28 w-full rounded object-cover"
+                        />
+                        <span className="absolute left-2 top-2 rounded bg-neutral-950/80 px-2 py-1 text-xs font-semibold text-neutral-100">
+                          {i === 0 ? "1 Primary" : `${i + 1}`}
+                        </span>
+                      </div>
+                      <p className="mt-2 truncate text-xs text-neutral-500">
+                        {image.file.name}
+                      </p>
+                      <div className="mt-2 flex items-center gap-2">
+                        <button
+                          type="button"
+                          onClick={() => moveSelectedImage(i, -1)}
+                          disabled={i === 0}
+                          className="rounded border border-neutral-700 px-2 py-1 text-xs text-neutral-300 disabled:cursor-not-allowed disabled:opacity-30"
+                        >
+                          Up
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => moveSelectedImage(i, 1)}
+                          disabled={i === selectedImages.length - 1}
+                          className="rounded border border-neutral-700 px-2 py-1 text-xs text-neutral-300 disabled:cursor-not-allowed disabled:opacity-30"
+                        >
+                          Down
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => removeSelectedImage(i)}
+                          className="ml-auto text-xs text-red-400 hover:text-red-300"
+                        >
+                          Remove
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                <button
+                  type="button"
+                  onClick={clearSelectedImages}
+                  className="mt-3 text-sm text-neutral-400 hover:text-neutral-200"
+                >
+                  Clear selected images
+                </button>
+              </div>
+            )}
+          </div>
+
+          <div className="mb-4">
+            <label className="block text-sm text-neutral-400 mb-1">
+              Image URLs (optional fallback, one per line)
             </label>
             <textarea
               value={imageUrls}
@@ -311,6 +483,7 @@ export default function AdminPage() {
                   <div className="flex items-start justify-between gap-4">
                     <div className="flex gap-4">
                       {p.product_images?.[0] && (
+                        /* eslint-disable-next-line @next/next/no-img-element */
                         <img
                           src={p.product_images[0].url}
                           alt={p.name}
