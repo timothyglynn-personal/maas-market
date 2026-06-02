@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 
 export type Product = {
   id: string;
@@ -26,13 +27,16 @@ function CornerFlourish({ className }: { className: string }) {
 
 export default function ProductFrame({
   product,
+  priority = false,
   onSelect,
 }: {
   product: Product;
+  priority?: boolean;
   onSelect: () => void;
 }) {
   const [currentImage, setCurrentImage] = useState(0);
   const hasMultiple = product.images.length > 1;
+  const currentSrc = product.images[currentImage];
 
   function next(e: React.MouseEvent) {
     e.stopPropagation();
@@ -65,12 +69,16 @@ export default function ProductFrame({
           <CornerFlourish className="br" />
           <div className="frame-mat relative">
             <div className="relative w-[240px] h-[300px] md:w-[280px] md:h-[350px] overflow-hidden bg-[#0d0825]">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={product.images[currentImage]}
-                alt={product.name}
-                className="absolute inset-0 w-full h-full object-contain transition-transform duration-700 group-hover:scale-[1.02]"
-              />
+              {currentSrc && (
+                <Image
+                  src={currentSrc}
+                  alt={product.name}
+                  fill
+                  priority={priority}
+                  sizes="(min-width: 1024px) 280px, (min-width: 640px) 240px, 240px"
+                  className="object-contain transition-transform duration-700 group-hover:scale-[1.02]"
+                />
+              )}
               <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-black/10 pointer-events-none" />
 
               {hasMultiple && (

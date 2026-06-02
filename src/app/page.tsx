@@ -150,10 +150,11 @@ export default function Home() {
         </p>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-12 w-full max-w-7xl justify-items-center">
-          {products.map((product) => (
+          {products.map((product, index) => (
             <ProductFrame
               key={product.id}
               product={product}
+              priority={index < 4}
               onSelect={() => setSelectedProduct(product)}
             />
           ))}

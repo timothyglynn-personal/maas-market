@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
+import Image from "next/image";
 import { Product } from "./ProductFrame";
 
 export default function ProductModal({
@@ -13,6 +14,7 @@ export default function ProductModal({
 }) {
   const [currentImage, setCurrentImage] = useState(0);
   const hasMultiple = product.images.length > 1;
+  const currentSrc = product.images[currentImage];
 
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
@@ -56,12 +58,16 @@ export default function ProductModal({
         <div className="flex flex-col md:flex-row gap-0">
           {/* Image carousel */}
           <div className="relative w-full md:w-1/2 aspect-[3/4] bg-[#0d0825] flex-shrink-0">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={product.images[currentImage]}
-              alt={product.name}
-              className="absolute inset-0 w-full h-full object-contain"
-            />
+            {currentSrc && (
+              <Image
+                src={currentSrc}
+                alt={product.name}
+                fill
+                priority
+                sizes="(min-width: 768px) 384px, 100vw"
+                className="object-contain"
+              />
+            )}
 
             {hasMultiple && (
               <>
@@ -91,17 +97,18 @@ export default function ProductModal({
                     <button
                       key={i}
                       onClick={() => setCurrentImage(i)}
-                      className={`w-12 h-12 rounded border-2 overflow-hidden transition-all ${
+                      className={`relative w-12 h-12 rounded border-2 overflow-hidden transition-all ${
                         i === currentImage
                           ? "border-[#c5a455] shadow-[0_0_8px_rgba(197,164,85,0.5)]"
                           : "border-white/20 opacity-60 hover:opacity-100"
                       }`}
                     >
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
+                      <Image
                         src={img}
                         alt=""
-                        className="object-cover w-full h-full"
+                        fill
+                        sizes="48px"
+                        className="object-cover"
                       />
                     </button>
                   ))}
