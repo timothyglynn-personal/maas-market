@@ -8,6 +8,13 @@ export async function POST(req: NextRequest) {
     const { name, email } = await req.json();
     const origin = req.headers.get("origin") || "http://localhost:3000";
 
+    if (!email || !email.toLowerCase().endsWith("@stripe.com")) {
+      return NextResponse.json(
+        { error: "Only @stripe.com email addresses can create seller accounts." },
+        { status: 403 }
+      );
+    }
+
     // 1. Create connected account on Stripe
     const accountParams = new URLSearchParams();
     accountParams.append("country", "US");
